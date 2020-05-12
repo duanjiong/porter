@@ -2,7 +2,6 @@
 set -e
 tag=`git rev-parse --short HEAD`
 MANAGER_IMG=magicsong/porter:$tag
-AGENT_IMG=magicsong/porter-agent:$tag
 TEST_NS=porter-system
 SKIP_BUILD=no
 
@@ -50,15 +49,11 @@ if [ $SKIP_BUILD != "yes" ];then
     echo "Building manager"
     ./hack/deploy.sh $MANAGER_IMG manager
     echo "Building manager Done"
-    echo "Building agent"
-    ./hack/deploy.sh $AGENT_IMG agent
-    echo "Building agent Done"
 fi
 
 sed $sedopt  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/dev/kustomization.yaml
 
 echo "[4] updating kustomize image patch file"
-sed $sedopt 's@image: .*@image: '"${AGENT_IMG}"'@' ./config/dev/agent_image_patch.yaml
 sed $sedopt 's@image: .*@image: '"${MANAGER_IMG}"'@' ./config/dev/manager_image_patch.yaml
 
 echo "Building yamls"

@@ -21,7 +21,6 @@ function cleanup(){
 dest="./deploy/porter.yaml"
 tag=`git rev-parse --short HEAD`
 MANAGER_IMG=kubespheredev/porter:$tag
-AGENT_IMG=kubespheredev/porter-agent:$tag
 TEST_NS=porter-test-$tag
 SKIP_BUILD=no
 MODE=test
@@ -69,14 +68,9 @@ if [ $SKIP_BUILD != "yes" ]; then
     echo "Building manager"
     ./hack/deploy.sh $MANAGER_IMG manager
     echo "Building manager Done"
-
-    echo "Building agent"
-    ./hack/deploy.sh $AGENT_IMG agent
-    echo "Building agent Done"
 fi
 
 echo "[4] updating kustomize image patch file"
-sed $sedopt 's@image: .*@image: '"${AGENT_IMG}"'@' ./config/dev/agent_image_patch.yaml
 sed $sedopt 's@image: .*@image: '"${MANAGER_IMG}"'@' ./config/dev/manager_image_patch.yaml
 sed $sedopt  's/namespace: .*/namespace: '"${TEST_NS}"'/' ./config/dev/kustomization.yaml
 

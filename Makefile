@@ -1,7 +1,6 @@
 
 # Image URL to use all building/pushing image targets
 IMG_MANAGER ?= kubespheredev/porter:v0.1.1
-IMG_AGENT ?= kubespheredev/porter-agent:v0.1.1
 NAMESPACE ?= porter-system
 
 CRD_OPTIONS ?= "crd:trivialVersions=true"
@@ -64,13 +63,10 @@ clean-up:
 
 release:
 	./hack/deploy.sh ${IMG_MANAGER} manager
-	./hack/deploy.sh ${IMG_AGENT} agent
-	
+
 ifeq ($(uname), Darwin)
-	sed -i '' -e 's@image: .*@image: '"${IMG_AGENT}"'@' ./config/release/agent_image_patch.yaml
-	sed -i '' -e 's@image: .*@image: '"${IMG_MANAGER}"'@' ./config/release/manager_image_patch.yaml	
+	sed -i '' -e 's@image: .*@image: '"${IMG_MANAGER}"'@' ./config/release/manager_image_patch.yaml
 else
-	sed -i -e 's@image: .*@image: '"${IMG_AGENT}"'@' ./config/release/agent_image_patch.yaml
 	sed -i -e 's@image: .*@image: '"${IMG_MANAGER}"'@' ./config/release/manager_image_patch.yaml
 endif
 	kustomize build config/release -o deploy/porter.yaml

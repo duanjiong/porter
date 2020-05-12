@@ -7,5 +7,4 @@ resources:
 - ns.yaml
 
 patchesStrategicMerge:
-- agent_image_patch.yaml
 - manager_image_patch.yaml
